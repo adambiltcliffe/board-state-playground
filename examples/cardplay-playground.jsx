@@ -7,7 +7,7 @@ import PlaygroundApp from "..";
 
 ReactDOM.render(
   <>
-    <PlaygroundApp gameClass={CardPlayGame} initialState={CardPlayGame.getStartState()} />
+    <PlaygroundApp gameClass={CardPlayGame} initialState={CardPlayGame.getStartState()} filterKeys={['a','b','c']} />
   </>,
   document.getElementById("react-render-target")
 );

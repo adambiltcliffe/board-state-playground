@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react";
 import niceStringify from "json-stringify-pretty-compact"
 
-const PlaygroundApp = ({ gameClass, initialState }) => {
+const PlaygroundApp = ({ gameClass, initialState, filterKeys }) => {
   const [currentState, setCurrentState] = useState(initialState);
   const [newAction, setNewAction] = useState("");
   const [allowSubmit, setAllowSubmit] = useState(false);
@@ -55,6 +55,16 @@ const PlaygroundApp = ({ gameClass, initialState }) => {
     </form>
   );
 
+  let filterBlocks = null
+  if (filterKeys != undefined) {
+    filterBlocks = filterKeys.map(k => (
+      <React.Fragment key={k}>
+        <h4>Filter "{k}"</h4>
+        <pre><code>{niceStringify(gameClass.filter(currentState, k))}</code></pre>
+      </React.Fragment>
+    ))
+  }
+
   return (
     <>
       <h3>Full view</h3>
@@ -62,6 +72,7 @@ const PlaygroundApp = ({ gameClass, initialState }) => {
         <code>{niceStringify(currentState, null, 2)}</code>
       </pre>
       {actionForm}
+      {filterBlocks}
     </>
   );
 };
