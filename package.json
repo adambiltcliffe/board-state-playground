@@ -1,5 +1,5 @@
 {
-  "name": "board-state-playground",
+  "name": "@adam.biltcliffe/board-state-playground",
   "version": "0.0.1",
   "description": "browser-based testing tool for the board-state library",
   "bin": "server.js",
