@@ -58,4 +58,8 @@ function runServer(entryPointFilename) {
   });
 }
 
-runServer(argv.entry);
+if (argv.entry === undefined) {
+  console.log("Usage: board-state-playground --entry entry-point.jsx");
+} else {
+  runServer(argv.entry);
+}
