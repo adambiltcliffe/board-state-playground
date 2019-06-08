@@ -33,7 +33,7 @@ function runServer(entryPointFilename) {
       ]
     },
     resolve: {
-      extensions: [".js", ".jsx"]
+      extensions: ["*", ".js", ".jsx"]
     }
   };
 
