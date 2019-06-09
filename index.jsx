@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import niceStringify from "json-stringify-pretty-compact";
 import produce from "immer";
 
-const PlaygroundApp = ({ gameClass, initialState, filterKeys }) => {
+const PlaygroundApp = ({ gameClass, initialState, filterKeys = [] }) => {
   const [history, setHistory] = useState(() => [
     {
       state: initialState,
@@ -11,7 +11,7 @@ const PlaygroundApp = ({ gameClass, initialState, filterKeys }) => {
         {},
         ...filterKeys.map(k => ({ [k]: gameClass.filter(initialState, k) }))
       ),
-      newInfos: Object.assign({}, filterKeys.map(k => ({ [k]: null })))
+      newInfos: Object.assign({}, ...filterKeys.map(k => ({ [k]: null })))
     }
   ]);
   const [newAction, setNewAction] = useState("");
@@ -50,6 +50,7 @@ const PlaygroundApp = ({ gameClass, initialState, filterKeys }) => {
       history[0].state,
       actionObject
     );
+
     const step = {
       state,
       action: actionObject,
