@@ -17,6 +17,7 @@ const PlaygroundApp = ({ gameClass, initialState, filterKeys = [] }) => {
   const [newAction, setNewAction] = useState("");
   const [allowSubmit, setAllowSubmit] = useState(false);
   const [validation, setValidation] = useState("Enter action");
+  const [error, setError] = useState(null);
 
   const handleActionChange = useCallback(e => {
     setNewAction(e.target.value);
@@ -45,33 +46,37 @@ const PlaygroundApp = ({ gameClass, initialState, filterKeys = [] }) => {
     if (!allowSubmit) {
       return;
     }
-    const actionObject = JSON.parse(newAction);
-    const { state, newInfos } = gameClass.playAction(
-      history[0].state,
-      actionObject
-    );
+    try {
+      const actionObject = JSON.parse(newAction);
+      const { state, newInfos } = gameClass.playAction(
+        history[0].state,
+        actionObject
+      );
 
-    const step = {
-      state,
-      action: actionObject,
-      views: Object.assign(
-        {},
-        ...filterKeys.map(k => ({
-          [k]: gameClass.replayAction(
-            history[0].views[k],
-            actionObject,
-            newInfos[k]
-          )
-        }))
-      ),
-      newInfos
-    };
-    setHistory(
-      produce(history, draft => {
+      const step = {
+        state,
+        action: actionObject,
+        views: Object.assign(
+          {},
+          ...filterKeys.map(k => ({
+            [k]: gameClass.replayAction(
+              history[0].views[k],
+              actionObject,
+              newInfos[k]
+            )
+          }))
+        ),
+        newInfos
+      };
+      const newHistory = produce(history, draft => {
         draft.unshift(step);
-      })
-    );
-    setNewAction("");
+      });
+      setHistory(newHistory);
+      setNewAction("");
+      setError(null);
+    } catch (e) {
+      setError(e);
+    }
   });
 
   const actionList = gameClass.suggestActions(history[0].state).map(a => {
@@ -111,9 +116,42 @@ const PlaygroundApp = ({ gameClass, initialState, filterKeys = [] }) => {
     ));
   }
 
+  let errorBlock = null;
+  if (error) {
+    const errorExtra =
+      error.result !== undefined ? (
+        <>
+          <div>
+            Filtered result of actual action:{" "}
+            <pre>
+              <code>{niceStringify(error.result)}</code>
+            </pre>
+          </div>
+          <div>
+            Result of replay:{" "}
+            <pre>
+              <code>{niceStringify(error.replay)}</code>
+            </pre>
+          </div>
+          <div>
+            Difference: <code>{JSON.stringify(error.diff)}</code>
+          </div>
+        </>
+      ) : null;
+    errorBlock = (
+      <>
+        <div>
+          <strong>{error.name}</strong> {error.message}
+        </div>
+        {errorExtra}
+      </>
+    );
+  }
+
   return (
     <>
       <h3>Full view</h3>
+      {errorBlock}
       <small>
         Last action: <code>{niceStringify(history[0].action)}</code>
       </small>
