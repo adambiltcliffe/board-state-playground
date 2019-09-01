@@ -22,7 +22,7 @@ function runServer(entryPointFilename) {
       rules: [
         {
           test: /\.(js|jsx)$/,
-          exclude: /node_modules/,
+          exclude: /node_modules(\/|\\)(?!(@adam.biltcliffe(\/|\\)board-state-playground))/,
           use: {
             loader: "babel-loader",
             options: {
